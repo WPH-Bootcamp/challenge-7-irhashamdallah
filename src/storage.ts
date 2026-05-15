@@ -1,12 +1,42 @@
-import * as fs from 'fs';
-import * as path from 'path';
+ 
+import fs from "fs";
 
-// TODO: Definisikan path file untuk menyimpan data To-Do
+import { Todo } from "./types";
+import { isTodoArray } from "./utils";
 
-// TODO: Buat fungsi untuk membaca To-Do dari file
-// Hint: Gunakan try-catch untuk handle error saat membaca file
+const FILE_PATH = "./data/todos.json";
 
-// TODO: Buat fungsi untuk menyimpan To-Do ke file
-// Hint: Jangan lupa konversi ke JSON string sebelum disimpan
+// 1. Fungsi Simpan (Menulis ke File)
+export function saveTodos(todos: Todo[]): void {
+  try {
+    // Jika folder 'data' belum ada, buat dulu secara otomatis
+    if (!fs.existsSync("./data")) {
+      fs.mkdirSync("./data");
+    }
+    // Ubah array Todo menjadi tulisan (string) dan simpan ke file
+    fs.writeFileSync(FILE_PATH, JSON.stringify(todos, null, 2));
+  } catch (error) {
+    console.error("Gagal menyimpan data:", error);
+  }
+}
 
-// TODO: Buat fungsi untuk inisialisasi storage (buat file kosong jika belum ada)
+// 2. Fungsi Ambil (Membaca dari File)
+export function loadTodos(): Todo[] {
+  try {
+    if (!fs.existsSync(FILE_PATH)) return []; // Jika file belum ada, kasih array kosong
+
+    const data = fs.readFileSync(FILE_PATH, "utf-8");
+    const parsedData = JSON.parse(data);
+
+    // DI SINI KITA PAKAI SATPAM (Step 2 tadi)
+    if (isTodoArray(parsedData)) {
+      return parsedData;
+    } else {
+      console.error("Format data di file rusak!");
+      return [];
+    }
+  } catch (error) {
+    console.error("Gagal membaca data:", error);
+    return [];
+  }
+}
