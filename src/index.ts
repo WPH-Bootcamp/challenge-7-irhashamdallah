@@ -20,5 +20,63 @@
 // Hint: Gunakan recursive function atau while loop
 
 // TODO: Jalankan fungsi main
-console.log('Welcome to TypeScript To-Do App!');
-console.log('Start building your app here...');
+// console.log('Welcome to TypeScript To-Do App!');
+// console.log('Start building your app here...');
+
+import * as readline from "readline";
+import { addTodo, listTodos, completeTodo, deleteTodo } from "./todoService";
+
+// Membuat antarmuka untuk membaca input dari terminal
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+function tampilkanMenu(): void {
+  console.log("\n=== APLIKASI TO-DO TYPESCRIPT ===");
+  console.log("1. Tambah Tugas");
+  console.log("2. Lihat Semua Tugas");
+  console.log("3. Tandai Selesai");
+  console.log("4. Hapus Tugas");
+  console.log("5. Keluar");
+
+  rl.question("\nPilih menu (1-5): ", (jawaban) => {
+    switch (jawaban) {
+      case "1":
+        rl.question("Apa tugas baru kamu? ", (tugas) => {
+          addTodo(tugas);
+          tampilkanMenu(); // Kembali ke menu setelah selesai
+        });
+        break;
+      case "2":
+        listTodos();
+        tampilkanMenu();
+        break;
+      case "3":
+        listTodos(); // Tampilkan dulu biar user tahu nomornya
+        rl.question("Nomor berapa yang sudah selesai? ", (no) => {
+          completeTodo(parseInt(no) - 1); // -1 karena array mulai dari 0
+          tampilkanMenu();
+        });
+        break;
+      case "4":
+        listTodos();
+        rl.question("Nomor berapa yang mau dihapus? ", (no) => {
+          deleteTodo(parseInt(no) - 1);
+          tampilkanMenu();
+        });
+        break;
+      case "5":
+        console.log("Sampai jumpa lagi! Semangat kerjanya.");
+        rl.close();
+        break;
+      default:
+        console.log("Pilihan tidak ada. Masukkan angka 1-5.");
+        tampilkanMenu();
+        break;
+    }
+  });
+}
+
+// Menjalankan aplikasi untuk pertama kali
+tampilkanMenu();
